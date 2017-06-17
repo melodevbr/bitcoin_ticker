@@ -1,22 +1,27 @@
-defmodule BitcoinTicker.Tickers.Foxbit do
+defmodule BitcoinTicker.Tickers.BlinkTrade do
+  import BitcoinTicker.Tickers.Common.Validator
   @moduledoc """
-      Foxbit Ticker Adapter
+      BlinkTrade Ticker Adapter
   """
 
-  @ticker_url "https://api.blinktrade.com/api/v1/BRL/ticker?crypto_currency=BTC"
+  @currencies ["BRL", "VEF", "VND", "PKR", "CLP"]
 
-  def tick do
-    response = HTTPotion.get @ticker_url
+  def tick(currency) do
+    validate_currency(@currencies, currency)
+    response = HTTPotion.get build_ticker_url(currency)
 
     with {:ok, result} <- JSON.decode(response.body),
          do: transform(result)
   end
 
-  def provider, do: 'foxbit'
+  def provider, do: 'blinktrade'
+
+  defp build_ticker_url(currency) do
+    "https://api.blinktrade.com/api/v1/#{currency}/ticker?crypto_currency=BTC"
+  end
 
   defp transform(result) do
     {:ok, %{
-      "currency"   => "BRL",
       "average"    => result["last"],
       "buy"        => result["buy"],
       "sell"       => result["sell"],

@@ -1,12 +1,12 @@
 defmodule BitcoinTicker.Tickers.GDAX do
+  import BitcoinTicker.Tickers.Common.Validator
   @moduledoc """
       GDAX Ticker Adapter
   """
 
-  @ticker_url "https://api.gdax.com/products/BTC-USD/ticker"
-
-  def tick do
-    response = HTTPotion.get @ticker_url, [headers: ["User-Agent": "My Ticker"]]
+  def tick(currency) do
+    validate_currency(["USD", "EUR", "GBP"], currency)
+    response = HTTPotion.get build_ticker_url(currency), [headers: ["User-Agent": "My Ticker"]]
 
     with {:ok, result} <- JSON.decode(response.body),
          do: transform(result)
@@ -14,11 +14,14 @@ defmodule BitcoinTicker.Tickers.GDAX do
 
   def provider, do: 'gdax'
 
+  defp build_ticker_url(currency) do
+    "https://api.gdax.com/products/BTC-#{currency}/ticker"
+  end
+
   defp transform(result) do
     {:ok, dateTime, 0} = DateTime.from_iso8601(result["time"])
 
     {:ok, %{
-      "currency"   => "USD",
       "average"    => result["price"],
       "buy"        => result["bid"],
       "sell"       => result["ask"],

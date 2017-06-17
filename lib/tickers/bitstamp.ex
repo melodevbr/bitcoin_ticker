@@ -1,12 +1,12 @@
 defmodule BitcoinTicker.Tickers.Bitstamp do
+  import BitcoinTicker.Tickers.Common.Validator
   @moduledoc """
       Bitstamp Ticker Adapter
   """
 
-  @ticker_url "https://www.bitstamp.net/api/v2/ticker/btcusd"
-
-  def tick do
-    response = HTTPotion.get @ticker_url
+  def tick(currency) do
+    validate_currency(["USD", "EUR"], currency)
+    response = HTTPotion.get build_ticker_url(currency)
 
     with {:ok, result} <- JSON.decode(response.body),
          do: transform(result)
@@ -14,9 +14,12 @@ defmodule BitcoinTicker.Tickers.Bitstamp do
 
   def provider, do: 'bitstamp'
 
+  defp build_ticker_url(currency) do
+    "https://www.bitstamp.net/api/v2/ticker/btc#{String.downcase(currency)}"
+  end
+
   defp transform(result) do
     {:ok, %{
-      "currency"   => "USD",
       "average"    => result["open"],
       "buy"        => result["bid"],
       "sell"       => result["ask"],

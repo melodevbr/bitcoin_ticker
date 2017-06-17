@@ -1,22 +1,25 @@
 defmodule BitcoinTicker.Tickers.Kraken do
+  import BitcoinTicker.Tickers.Common.Validator
   @moduledoc """
       Kraken Ticker Adapter
   """
 
-  @ticker_url "https://api.kraken.com/0/public/Ticker?pair=XXBTZUSD"
-
-  def tick do
-    response = HTTPotion.get @ticker_url
+  def tick(currency) do
+    validate_currency(["USD", "EUR", "GBP", "CAD", "JPY"], currency)
+    response = HTTPotion.get build_ticker_url(currency)
 
     with {:ok, result} <- JSON.decode(response.body),
-         do: transform(result["result"]["XXBTZUSD"])
+         do: transform(result["result"]["XXBTZ#{currency}"])
   end
 
   def provider, do: 'kraken'
 
+  defp build_ticker_url(currency) do
+    "https://api.kraken.com/0/public/Ticker?pair=XXBTZ#{currency}"
+  end
+
   defp transform(result) do
     {:ok, %{
-      "currency"   => "USD",
       "average"    => Enum.at(result["p"], 1),
       "buy"        => Enum.at(result["b"], 0),
       "sell"       => Enum.at(result["a"], 0),
