@@ -1,4 +1,5 @@
 defmodule BitcoinTicker.Tickers.Poloniex do
+  import BitcoinTicker.Tickers.Common.Validator
   @moduledoc """
       Poloniex Ticker Adapter
   """
@@ -6,6 +7,7 @@ defmodule BitcoinTicker.Tickers.Poloniex do
   @ticker_url "https://poloniex.com/public?command=returnTicker"
 
   def tick do
+    validate_currency(["USD"], currency)
     response = HTTPotion.get @ticker_url
 
     with {:ok, result} <- JSON.decode(response.body),
@@ -16,7 +18,6 @@ defmodule BitcoinTicker.Tickers.Poloniex do
 
   defp transform(result) do
     {:ok, %{
-      "currency"   => "USD",
       "average"    => result["last"],
       "buy"        => result["highestBid"],
       "sell"       => result["lowestAsk"],

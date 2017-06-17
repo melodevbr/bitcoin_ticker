@@ -1,11 +1,13 @@
 defmodule BitcoinTicker.Tickers.MercadoBitcoin do
+  import BitcoinTicker.Tickers.Common.Validator
   @moduledoc """
       MercadoBitcoin Ticker Adapter
   """
 
   @ticker_url "https://www.mercadobitcoin.com.br/api/ticker/"
 
-  def tick do
+  def tick(currency) do
+    validate_currency(["BRL"], currency)
     response = HTTPotion.get @ticker_url
 
     with {:ok, result} <- JSON.decode(response.body),
@@ -16,7 +18,6 @@ defmodule BitcoinTicker.Tickers.MercadoBitcoin do
 
   defp transform(result) do
     {:ok, %{
-      "currency"   => "BRL",
       "average"    => result["last"],
       "buy"        => result["buy"],
       "sell"       => result["sell"],
