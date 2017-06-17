@@ -6,9 +6,9 @@ Hi everyone, this lib is in progress yet, but the main goal is help programmers 
 Bellow has a table with all sources to check trade rates with BTC
 | Currency | Source |
 |----------|--------|
-|USD| Bitfinex, Bitstamp, GDAX, Kraken, Liqui, Poloniex |
-|EUR| Bitstamp, GDAX, Kraken |
-|GBP| GDAX, Kraken |
+|USD| Bitfinex, Bitstamp, GDAX, Kraken, Liqui, Poloniex|
+|EUR| Bitstamp, GDAX, Kraken|
+|GBP| GDAX, Kraken|
 |BRL| MercadoBitcoin, BlinkTrade |
 |JPY| Kraken, GDAX |
 |CAD| Kraken |
@@ -16,7 +16,6 @@ Bellow has a table with all sources to check trade rates with BTC
 |VND| BlinkTrade |
 |PKR| BlinkTrade |
 |CLP| BlinkTrade |
-
 ## How to Use
 
 ```elixir
